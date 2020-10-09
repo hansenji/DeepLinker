@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">DeepLinker</string>
     <string name="code">Code: %s</string>
+    <string name="channel_name">channel-name</string>
+    <string name="channel_id">channel-id</string>
+    <string name="channel_description">channel-description</string>
 </resources>

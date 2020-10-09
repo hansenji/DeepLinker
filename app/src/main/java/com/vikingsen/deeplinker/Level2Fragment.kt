@@ -1,4 +1,4 @@
-githupackage com.vikingsen.deeplinker
+package com.vikingsen.deeplinker
 
 import android.net.Uri
 import android.os.Bundle
