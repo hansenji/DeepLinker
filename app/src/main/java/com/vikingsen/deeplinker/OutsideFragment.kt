@@ -31,11 +31,21 @@ class OutsideFragment : Fragment() {
         }
         binding.level2Button.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Level2Fragment.getOutsideUri("RED", "YELLOW")).apply {
+                // This treats the Deep link like an external DeepLink vs DeepLinkRequest
 //                flags = Intent.FLAG_ACTIVITY_NEW_TASK
             })
         }
         binding.noticeButton.setOnClickListener {
-            val deepLinkIntent = buildDeepLinkIntent("deeplinker://building/level1/GREEN/level2/RED")
+            val deepLinkIntent = buildDeepLinkIntent(Level2Fragment.getOutsideUri("PINK", "ORANGE"))
+
+            // Don't use this because you have to add args for every start destination you go through Uri's are easier. See Line 46
+//            val deepLinkIntent = NavDeepLinkBuilder(requireContext())
+//                .setGraph(R.navigation.main_nav)
+//                .setDestination(R.id.level2Fragment)
+//                .setArguments(Level2FragmentArgs("ORANGE").toBundle().apply {
+//                    putString("code1", "PINK")
+//                })
+//                .createPendingIntent()
 
             // https://developer.android.com/training/notify-user/build-notification#click
             val builder = NotificationCompat.Builder(requireContext(), getString(R.string.channel_id))
@@ -44,6 +54,8 @@ class OutsideFragment : Fragment() {
                 .setContentText("Tap to go to Level 2")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
+                // This will launch a new task.
+                // Creates a full backstack
                 .setContentIntent(deepLinkIntent)
                 .setAutoCancel(true)
 
@@ -53,14 +65,8 @@ class OutsideFragment : Fragment() {
         }
     }
 
-    private fun buildDeepLinkIntent(destination: String): PendingIntent {
-        val deepLinkIntent = Intent().apply {
-            action = Intent.ACTION_VIEW
-            data = Uri.parse(destination)
-            // Added seemed to make no difference in the backstack. If I understand correctly this may be because everything is running
-            // in a single activity.
-//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+    private fun buildDeepLinkIntent(destinationUri: Uri): PendingIntent {
+        val deepLinkIntent = Intent(Intent.ACTION_VIEW, destinationUri)
 
         return PendingIntent.getActivity(context, System.currentTimeMillis().toInt(), deepLinkIntent, PendingIntent.FLAG_ONE_SHOT)
     }
